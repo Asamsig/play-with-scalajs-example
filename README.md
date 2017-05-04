@@ -1,8 +1,6 @@
 # Play Framework with Scala.js
 
 [![License](http://img.shields.io/:license-Apache%202-red.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/vmunier/play-with-scalajs-example?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 This is a simple example application showing how you can integrate a Play project with a Scala.js project.
 
@@ -20,10 +18,10 @@ $ open http://localhost:9000
 
 ## Features
 
-The application uses the [sbt-web-scalajs](https://github.com/vmunier/sbt-web-scalajs) sbt plugin and the [scalajs-scripts](https://github.com/vmunier/scalajs-scripts) library.
+The application uses the [play-jsmessages](https://github.com/julienrf/play-jsmessages), [sbt-web-scalajs](https://github.com/vmunier/sbt-web-scalajs), [sbt-sassify](https://github.com/irundaia/sbt-sassify), [scalajs-react](https://github.com/japgolly/scalajs-react) and the [scalajs-scripts](https://github.com/vmunier/scalajs-scripts) library.
 
 - Run your application like a regular Play app
-  - `compile` triggers the Scala.js fastOptJS command
+  - `compile` triggers the Scala.js fastOptJS command, and SASS/SCSS compiling, for files located in assets.styles. (Note: Only using either SASS or SCSS works, not both at the same time.)
   - `run` triggers the Scala.js fastOptJS command on page refresh
   - `~compile`, `~run`, continuous compilation is also available
 - Compilation errors from the Scala.js projects are also displayed in the browser
@@ -43,13 +41,10 @@ $ sbt
 
 ## IDE integration
 
-### Eclipse
-
-1. `$ sbt "eclipse with-source=true"`
-2. Inside Eclipse, `File/Import/General/Existing project...`, choose the root folder. Uncheck the second and the last checkboxes to only import client, server and one shared, click `Finish`. ![Alt text](screenshots/eclipse-play-with-scalajs-example.png?raw=true "eclipse play-with-scalajs-example screenshot")
-
 ### IntelliJ
 
 In IntelliJ, open Project wizard, select `Import Project`, choose the root folder and click `OK`.
 Select `Import project from external model` option, choose `SBT project` and click `Next`. Select additional import options and click `Finish`.
 Make sure you use the IntelliJ Scala Plugin v1.3.3 or higher. There are known issues with prior versions of the plugin.
+
+Make sure that your Play 2 run task module targets the root project and not the server module. Otherwise you will get a no main class found error.
