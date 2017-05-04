@@ -10,7 +10,7 @@ import scala.scalajs.js
 import scala.scalajs.js.JSON
 
 /**
-  * Created by Korebian on 17-04-2017.
+  * Created by Alexander Samsig on 17-04-2017.
   */
 object NameComponent {
 

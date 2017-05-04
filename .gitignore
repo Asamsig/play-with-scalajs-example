@@ -23,10 +23,3 @@ shared/.jvm
 .~*
 *~
 *.orig
-
-# eclipse
-.scala_dependencies
-.buildpath
-.cache
-.target
-bin/
