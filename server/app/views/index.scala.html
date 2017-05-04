@@ -1,9 +1,7 @@
-@(message: String)
+@(message: String)(implicit requestHeader: RequestHeader, messages: Messages, wjAssets: WebJarAssets)
 
-@main("Play with Scala.js") {
-<h2>Play and Scala.js share a same message</h2>
-<ul>
-  <li>Play shouts out: <em>@message</em></li>
-  <li>Scala.js shouts out: <em id="scalajsShoutOut"></em></li>
-</ul>
-}
+    @main("Play with Scala.js") {
+        <h2>Play + Scala.js + Scala.js-React</h2>
+        <div id="mydiv">
+        </div>
+    }
