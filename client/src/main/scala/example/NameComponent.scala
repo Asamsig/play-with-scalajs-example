@@ -22,21 +22,37 @@ object NameComponent {
 
   class Backend($: BackendScope[Unit, State]) {
 
-    def onNextPageClick(page: Int) =
-      $.state flatMap { s =>
-        $.modState(_ => State(s.elements, 1))
+    def onChangePageClick(page: Int) = $.state flatMap { s =>
+      Callback {
+        $.modState(a => State(List.empty, 1)).runNow()
+
+        val newPage = s.page + page
+
+        val url = js.Dynamic.global.Routes.controllers.Application.list(newPage).url.toString()
+
+        Ajax.get(url).onSuccess {
+          case xhr =>
+            if (xhr.status == 200) {
+              val data = JSON.parse(xhr.responseText).asInstanceOf[js.Array[js.Dynamic]]
+              val names = data.toList.map(item => Item(item.name.toString, BigDecimal(item.price.asInstanceOf[Int])))
+              $.modState(a => State(names.map(x => x.name + " " + x.price), 1)).runNow()
+            }
+        }
       }
+    }
 
     def render(s: State) =
-      nameList((s.elements, onNextPageClick))
+      nameList(s.elements, onChangePageClick)
   }
 
   val tableHead = ScalaComponent.static("TableHead")(thead(tr(td(Messages("name").capitalize))))()
 
-  val name = ScalaComponent.builder[(String, NextPageClick)]("Name")
+  val tableFooter = ScalaComponent.builder[NextPageClick]("TableFooter").render_P { nextPage => tfoot(tr(td(ul(`class` := "pagination text-center", role := "navigation", li(`class` := "pagination-previous", a(onClick --> nextPage(-1), Messages("previous").capitalize)), li(`class` := "pagination-next", a(onClick --> nextPage(1), Messages("next").capitalize)))))) }.build
+
+  val name = ScalaComponent.builder[String]("Name")
     .render_P {
-      case (p, b) =>
-        tr(td(p, onClick --> b(1)))
+      case (p) =>
+        tr(td(p))
     }.build
 
   val nameList = ScalaComponent.builder[(List[String], NextPageClick)]("NameList")
@@ -45,11 +61,12 @@ object NameComponent {
         table(
           tableHead,
           tbody(
-          if (list.isEmpty)
-            tr(td(colSpan := 10, img(src := "https://d2h8u6funiy290.cloudfront.net/wp-content/themes/youvisit/assets/img/form-loader.gif?x45988")))
-          else
-            list.toVdomArray(p => name((p, b)))
-          )
+            if (list.isEmpty)
+              tr(td(colSpan := 10, img(src := "https://ilt.taxmann.com/images/loading.gif", height := "150px")))
+            else
+              list.toVdomArray(p => name.withKey(p)(p))
+          ),
+          tableFooter(b)
         )
     }.build
 
@@ -58,7 +75,7 @@ object NameComponent {
     .renderBackend[Backend]
     .componentDidMount(scope => Callback {
 
-      val url =  js.Dynamic.global.Routes.controllers.Application.list().url.toString()
+      val url = js.Dynamic.global.Routes.controllers.Application.list().url.toString()
 
       Ajax.get(url).onSuccess {
         case xhr =>

@@ -4,7 +4,7 @@
 
 # Home page
 GET        /                        controllers.Application.index
-GET        /myapi/list              controllers.Application.list
+GET        /myapi/list              controllers.Application.list(page: Option[Int] ?= None)
 
 # Messages
 GET        /messages                controllers.Application.messages
