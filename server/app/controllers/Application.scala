@@ -4,16 +4,17 @@ import akka.actor.ActorSystem
 import play.api.libs.json._
 import play.api.mvc._
 import shared.{Item, SharedMessages}
-import bab.{Item => ItemFormat}
 import com.google.inject.Inject
 import jsmessages.JsMessagesFactory
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.concurrent.Execution.Implicits._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 
-class Application @Inject()(val actorSystem: ActorSystem, val messagesApi: MessagesApi, jsMessagesFactory: JsMessagesFactory)(implicit wja: WebJarAssets) extends Controller with I18nSupport {
+class Application @Inject()(
+    val actorSystem: ActorSystem,
+    jsMessagesFactory: JsMessagesFactory,
+    mcc: MessagesControllerComponents)(implicit ec: ExecutionContext)
+    extends MessagesAbstractController(mcc) {
 
   val items = Map(
     1 -> Seq(
@@ -37,8 +38,7 @@ class Application @Inject()(val actorSystem: ActorSystem, val messagesApi: Messa
   def list(page: Option[Int] = None) = Action.async { implicit request =>
     val currentPage = page.filter(_ > 1).getOrElse(1)
     akka.pattern.after(1 seconds, actorSystem.scheduler) {
-      Future.successful(Ok(Json.toJson(items(currentPage).map(ItemFormat.itemFormat.writes)))
-      )
+      Future.successful(Ok(Json.toJson(items(currentPage))))
     }
   }
 

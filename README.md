@@ -18,7 +18,7 @@ $ open http://localhost:9000
 
 ## Features
 
-The application uses the [play-jsmessages](https://github.com/julienrf/play-jsmessages), [sbt-web-scalajs](https://github.com/vmunier/sbt-web-scalajs), [sbt-sassify](https://github.com/irundaia/sbt-sassify), [scalajs-react](https://github.com/japgolly/scalajs-react) and the [scalajs-scripts](https://github.com/vmunier/scalajs-scripts) library.
+The application uses the [web-jars](https://github.com/webjars/webjars-play), [play-jsmessages](https://github.com/julienrf/play-jsmessages), [sbt-web-scalajs](https://github.com/vmunier/sbt-web-scalajs), [sbt-sassify](https://github.com/irundaia/sbt-sassify), [scalajs-react](https://github.com/japgolly/scalajs-react) and the [scalajs-scripts](https://github.com/vmunier/scalajs-scripts) library.
 
 - Run your application like a regular Play app
   - `compile` triggers the Scala.js fastOptJS command, and SASS/SCSS compiling, for files located in assets.styles. (Note: Only using either SASS or SCSS works, not both at the same time.)
