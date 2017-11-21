@@ -21,7 +21,7 @@ lazy val server = (project in file("server"))
       "com.vmunier" %% "scalajs-scripts" % "1.1.1",
       "org.julienrf" %% "play-jsmessages" % "3.0.0",
       specs2 % Test,
-      "org.webjars" %% "webjars-play" % "2.6.1",
+      "org.webjars" %% "webjars-play" % "2.6.2",
       "org.webjars.bower" % "compass-mixins" % "1.0.2",
       guice,
       ws,
@@ -55,7 +55,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(
     scalaVersion := scalaV,
     libraryDependencies ++= Seq(
-      "com.typesafe.play" %%% "play-json" % "2.6.0"
+      "com.typesafe.play" %%% "play-json" % "2.6.7"
     )
   )
   .jsConfigure(_ enablePlugins ScalaJSWeb)

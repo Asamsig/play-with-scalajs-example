@@ -1,14 +1,19 @@
 package controllers
 
 import akka.actor.ActorSystem
+import akka.stream.ThrottleMode
+import akka.stream.scaladsl.{Flow, Sink, Source}
 import play.api.libs.json._
 import play.api.mvc._
 import shared.{Item, SharedMessages}
 import com.google.inject.Inject
+import data.Fruits
 import jsmessages.JsMessagesFactory
 
+import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
+import play.api.mvc.WebSocket.MessageFlowTransformer
 
 class Application @Inject()(
     val actorSystem: ActorSystem,
@@ -16,7 +21,9 @@ class Application @Inject()(
     mcc: MessagesControllerComponents)(implicit ec: ExecutionContext)
     extends MessagesAbstractController(mcc) {
 
-  val items = Map(
+  val r = new scala.util.Random(1000)
+
+  val items = mutable.Map(
     1 -> Seq(
       Item("apple", 108),
       Item("orange", 103),
@@ -40,6 +47,22 @@ class Application @Inject()(
     akka.pattern.after(1 seconds, actorSystem.scheduler) {
       Future.successful(Ok(Json.toJson(items(currentPage))))
     }
+  }
+
+  implicit val messageFlowTransformer =
+    MessageFlowTransformer.jsonMessageFlowTransformer[String, Item]
+
+  def stream = WebSocket.accept[String, Item] { implicit request =>
+    val in = Sink.foreach[String](println)
+
+    val out = Source(Stream.continually(randomItem))
+      .throttle(200, 1 second, 5, _.price.toInt, ThrottleMode.Shaping)
+
+    Flow.fromSinkAndSource(in, out)
+  }
+
+  private def randomItem = {
+    Item(Fruits.fruits(r.nextInt(Fruits.fruits.length)), r.nextInt(100))
   }
 
   val messages = Action { implicit request =>
