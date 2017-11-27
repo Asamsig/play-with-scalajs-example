@@ -15,10 +15,9 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 import play.api.mvc.WebSocket.MessageFlowTransformer
 
-class Application @Inject()(
-    val actorSystem: ActorSystem,
-    jsMessagesFactory: JsMessagesFactory,
-    mcc: MessagesControllerComponents)(implicit ec: ExecutionContext)
+class Application @Inject()(val actorSystem: ActorSystem,
+                            jsMessagesFactory: JsMessagesFactory,
+                            mcc: MessagesControllerComponents)(implicit ec: ExecutionContext)
     extends MessagesAbstractController(mcc) {
 
   val r = new scala.util.Random(1000)
@@ -53,7 +52,7 @@ class Application @Inject()(
     MessageFlowTransformer.jsonMessageFlowTransformer[String, Item]
 
   def stream = WebSocket.accept[String, Item] { implicit request =>
-    val in = Sink.foreach[String](println)
+    val in = Sink.onComplete(_.foreach(println))
 
     val out = Source(Stream.continually(randomItem))
       .throttle(200, 1 second, 5, _.price.toInt, ThrottleMode.Shaping)
