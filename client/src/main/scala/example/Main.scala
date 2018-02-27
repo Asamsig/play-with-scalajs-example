@@ -1,13 +1,25 @@
 package example
 
+import example.ItemComponent.MdlTableStyle
 import org.scalajs.dom
 
-import scala.scalajs.js
+import scalacss.internal.mutable.GlobalRegistry
+import scalacss.DevDefaults._
+import scalacss.ScalaCssReact._
+object Main {
 
-object Main extends js.JSApp {
+  def main(args: Array[String]): Unit = {
+    GlobalRegistry.register(
+//      ReactTable.DefaultStyle,
+//      ReactListView.DefaultStyle,
+//      ReactSearchBox.DefaultStyle,
+//      Pager.DefaultStyle,
+//      ReactDraggable.Style
+      MdlTableStyle.Style
+    )
+    GlobalRegistry.addToDocumentOnRegistration()
 
-  def main(): Unit = {
-    ItemComponent().renderIntoDOM(dom.document.getElementById("mydiv"))
+    ItemComponent().renderIntoDOM(dom.document.getElementById("entry-point"))
   }
 
 }
